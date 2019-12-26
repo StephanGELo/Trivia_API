@@ -88,12 +88,20 @@ def create_app(test_config=None):
         categories = Category.query.all()
         formatted_categories = [category.format() for category in categories]
 
+        current_categories = [
+            q['category'] for q in current_questions
+        ]
+        actual_categories = [
+            Category.query.get(category_id).format()['type']
+            for category_id in current_categories
+        ]
+
         return jsonify({
             'success': True,
             'questions': current_questions,
             'total_questions': num_of_questions,
             'categories': formatted_categories,
-            'current_category': ''
+            'current_category': actual_categories
         })
 
     '''
@@ -191,7 +199,6 @@ def create_app(test_config=None):
                 ).all()
                 num_of_questions = len(questions)
                 current_questions = paginate_questions(request, questions)
-                print("all questions are: ", current_questions)
                 current_categories = [
                     q['category'] for q in current_questions
                 ]
